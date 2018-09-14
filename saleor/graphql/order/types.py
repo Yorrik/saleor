@@ -1,13 +1,15 @@
+from decimal import Decimal
+
 import graphene
 from graphene import relay
 
-from ...order import OrderEvents, models
+from ...order import OrderEvents, OrderEventsEmails, models
 from ..account.types import User
 from ..core.types.common import CountableDjangoObjectType
 from ..core.types.money import Money, TaxedMoney
-from decimal import Decimal
 
 OrderEventsEnum = graphene.Enum.from_enum(OrderEvents)
+OrderEventsEmailsEnum = graphene.Enum.from_enum(OrderEventsEmails)
 
 
 class OrderEvent(CountableDjangoObjectType):
@@ -20,7 +22,7 @@ class OrderEvent(CountableDjangoObjectType):
     message = graphene.String(
         description='Content of a note added to the order.')
     email = graphene.String(description='Email of the customer')
-    email_type = graphene.String(
+    email_type = OrderEventsEmailsEnum(
         description='Type of an email sent to the customer')
     amount = graphene.Float(description='Amount of money.')
     quantity = graphene.Int(description='Number of items.')
@@ -34,7 +36,8 @@ class OrderEvent(CountableDjangoObjectType):
         exclude_fields = ['order', 'parameters']
 
     def resolve_email(self, info):
-        return self.parameters.get('email', None)
+        email =  self.parameters.get('email')
+        return email.upper() if email else None
 
     def resolve_email_type(self, info):
         return self.parameters.get('email_type', None)
