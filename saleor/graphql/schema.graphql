@@ -941,7 +941,7 @@ type OrderEvent implements Node {
   user(id: ID): User
   message: String
   email: String
-  emailType: String
+  emailType: OrderEventsEmails
   amount: Float
   quantity: Int
   composedId: String
@@ -963,6 +963,13 @@ enum OrderEvents {
   FULFILLMENT_FULFILLED_ITEMS
   NOTE_ADDED
   OTHER
+}
+
+enum OrderEventsEmails {
+  PAYMENT
+  SHIPPING
+  ORDER
+  FULFILLMENT
 }
 
 type OrderLine implements Node {
